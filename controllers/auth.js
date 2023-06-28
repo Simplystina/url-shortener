@@ -49,19 +49,19 @@ exports.register = async(req,res)=>{
         const {firstName, lastName, email, password}=data = req.body
         
         if(!(firstName && lastName && email && password)){
-           return res.status(400).send("All input is required")
+           return res.status(400).json({success: false, message:"All input is required"})
         }
         
         //check if user already exist
 
         const oldUser = await UserModel.findOne({email})
         if (oldUser) {
-            return res.status(409).send("User Already exist. Please Login")
+            return res.status(409).json({ success: false, message:"User Already exist. Please Login"})
         }
 
         //check password length
         if(password.length < 5){
-            return res.status(404).send("Password must be greater than length 4")
+            return res.status(404).json({success:false, message:"Password must be greater than length 4"})
         }
         //create user in our database
        
@@ -179,7 +179,7 @@ exports.resendVerification = async(req, res) => {
       const user = await UserModel.findOne({ email });
   
       if (!user) {
-        return res.status(404).json({ error: 'User not found' });
+        return res.status(404).json({success:false, message: 'User not found' });
       }
   
       const verificationToken = generateVerificationToken(); 
@@ -192,10 +192,10 @@ exports.resendVerification = async(req, res) => {
       const verificationLink = `${baseUrl}/verify?token=${verificationToken}`;
       await sendVerificationEmail(user, verificationLink);
   
-      return res.status(201).json({ message: 'Verification email resent successfully' });
+      return res.status(201).json({success:true , message: 'Verification email resent successfully' });
     } catch (error) {
       console.error(error);
-      return res.status(500).json({ error: 'Internal server error' });
+      return res.status(500).json({ success: false, message: 'Internal server error' });
     }
   }
   
