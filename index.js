@@ -17,7 +17,7 @@ connect()
 
 const app = express()
 
-app.get("/:shortId", urlController.urlRedirect)
+app.get("/:shortId", urlController.urlRedirect) //endpoint to redirect to original link
 
 
 app.use(bodyParser.json()) // for parsing application/json
@@ -36,7 +36,7 @@ app.use(function(req, res, next) {
 
 
 app.use('/', authRouter)
-app.use('/', auth,urlsRouter)
+app.use('/urls', auth,urlsRouter)
 
 
 app.get('/',(req,res)=>{
