@@ -3,7 +3,7 @@ const cors = require("cors")
 const {connect} = require("./Database")
 const auth = require("./Middleware/auth")
 const bodyParser = require("body-parser")
-
+const urlController = require("./Controllers/urls")
 
 require("dotenv").config()
 
@@ -16,6 +16,9 @@ const PORT = process.env.PORT
 connect()
 
 const app = express()
+
+app.get("/:shortId", urlController.urlRedirect)
+
 
 app.use(bodyParser.json()) // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -34,6 +37,7 @@ app.use(function(req, res, next) {
 
 app.use('/', authRouter)
 app.use('/', auth,urlsRouter)
+
 
 app.get('/',(req,res)=>{
     res.status(200).send({message:"Home Route",status:true})

@@ -6,7 +6,6 @@ require("dotenv").config()
 const authRouter = express.Router()
 
 
-
 authRouter.post('/signup', authController.register)
 authRouter.post('/login', authController.login)
 authRouter.get('/verify', authController.verify)
