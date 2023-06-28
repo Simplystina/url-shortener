@@ -1,5 +1,5 @@
 const express = require("express")
-const urlsController = require("../Controllers/urls")
+const urlsController = require("../controllers/urls")
 
 require("dotenv").config()
 

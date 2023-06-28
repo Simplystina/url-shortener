@@ -3,7 +3,7 @@ const cors = require("cors")
 const {connect} = require("./Database")
 const auth = require("./Middleware/auth")
 const bodyParser = require("body-parser")
-const urlController = require("./Controllers/urls")
+const urlController = require("./controllers/urls")
 
 require("dotenv").config()
 
