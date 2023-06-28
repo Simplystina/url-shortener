@@ -23,5 +23,8 @@
     "qrcode-generator": "^1.4.4",
     "shortid": "^2.2.16",
     "validator": "^13.9.0"
+  },
+  "engines": {
+    "node": ">=14.20.1"
   }
 }
