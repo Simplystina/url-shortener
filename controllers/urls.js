@@ -132,4 +132,25 @@ exports.getLinkHistory = async(req,res)=>{
     }
 } 
 
-//7011149292
+
+exports.deleteLink = async (req, res) => {
+    try {
+      const linkId = req.params.id;
+  
+      // Find and delete the link by ID
+      const deletedLink = await UrlsModel.findByIdAndDelete(linkId);
+  
+      if (!deletedLink) {
+        return res.status(404).json({ success: false, message: 'Link not found.' });
+      }
+  
+      return res.json({success: true, message: 'Link deleted successfully.' });
+    } catch (error) {
+      console.error('Error deleting link:', error);
+      return res.status(500).json({ success:false, message: 'An error occurred while deleting the link.' });
+    }
+  };
+  
+  
+  
+  
