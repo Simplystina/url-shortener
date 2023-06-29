@@ -10,7 +10,7 @@ function generateVerificationToken() {
   }
 
 
-const baseUrl = 'http://localhost:4000'
+const baseUrl = 'https://urlshortner-3u0i.onrender.com'
 // Send verification email
 async function sendVerificationEmail(user,verificationLink) {
 

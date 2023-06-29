@@ -2,7 +2,7 @@ const UrlsModel = require("../Model/urls")
 const validator = require('validator');
 const QRCode = require('qrcode-generator');
 
-const baseUrl = 'https://localhost:4000'
+const baseUrl = 'https://urlshortner-3u0i.onrender.com'
 exports.shorten = async(req,res)=>{
     try {
         // Dynamically import the nanoid library
