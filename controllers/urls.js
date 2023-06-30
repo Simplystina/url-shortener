@@ -18,7 +18,7 @@ exports.shorten = async(req,res)=>{
         const cleanedUrl = url.replace(/[^\w\s]/gi, "");
 
         // Generate a NanoID
-        const nanoid = customAlphabet(cleanedUrl, 10)
+        const nanoid = customAlphabet(cleanedUrl, 5)
         const shortid = nanoid() 
 
       
