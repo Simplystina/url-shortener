@@ -3,6 +3,12 @@
 # URL Shortener Backend
 This repository contains the backend code for a URL shortener application. The backend is built using Node.js and Express, and it provides RESTful APIs to create shortened URLs, redirect to the original URLs, generate QR codes, manage link history, and delete links.
 
+## BASEURL 
+https://urlshortner-3u0i.onrender.com
+
+## FRONTEND Url
+https://linkurl.netlify.app/
+
 ## Table of Contents
 
 - [Installation](#installation)
