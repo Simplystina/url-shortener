@@ -10,6 +10,7 @@ require("dotenv").config()
 //import Routers
 const authRouter = require("./Routers/auth")
 const urlsRouter = require("./Routers/urls")
+const rateLimiterUsingThirdParty  = require('./Middleware/rateLimit')
 
 
 const PORT = process.env.PORT 
@@ -34,7 +35,7 @@ app.use(function(req, res, next) {
     next();
 });
 
-
+app.use(rateLimiterUsingThirdParty); //rate limiting
 app.use('/', authRouter)
 app.use('/urls', auth,urlsRouter)
 
