@@ -84,12 +84,12 @@ function generateQRCode(url) {
     return qr.createDataURL();
   }
 
-exports.qrCodeGenerate = async(req,res)=>{
+exports.generateqrcode = async(req,res)=>{
     try {
         const shortId = req.params.shortId;
 
         const  url  = req.params.shortId
-        console.log(url, "urlllllllllllllllll", req.ip)
+        console.log(url, "urlllllllllllllllll", req.ip,"rep.ip")
 
         const data = await UrlsModel.findOne({shortId: url})
 

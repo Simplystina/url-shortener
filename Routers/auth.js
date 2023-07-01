@@ -8,7 +8,7 @@ const authRouter = express.Router()
 
 authRouter.post('/signup', authController.register)
 authRouter.post('/login', authController.login)
-authRouter.get('/verify', authController.verify)
+authRouter.get('/veri', authController.verify)
 authRouter.post('/resend-link',authController.resendVerification)
 
 module.exports = authRouter

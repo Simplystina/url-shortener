@@ -6,7 +6,7 @@ const verifyToken = (req, res, next)=>{
 
     if (typeof bearerHeader ===  'undefined') {
 
-        return res.status(403).send("A token is required for authentication")
+        return res.status(403).json({success: false, message: "A token is required for authentication"})
     }
     try {
         const bearer = bearerHeader.split(' ')
@@ -17,7 +17,7 @@ const verifyToken = (req, res, next)=>{
         console.log(req.user)
     } catch (error) {
         console.log(error)
-        return res.status(401).send("Invalid Token")
+        return res.status(401).json({success: false, message: "Invalid Token"})
     }
     return next()
 }
