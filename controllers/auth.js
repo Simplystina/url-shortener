@@ -152,12 +152,17 @@ exports.login = async(req,res)=>{
 exports.verify = async(req, res) => {
     const { token } = req.query;
                               
-    // Find the user with the provided verification token
+
+    try {
+      // Find the user with the provided verification token
     const user = await UserModel.findOne({
       verificationToken: token,
       verificationTokenExpiresAt: { $gt: Date.now() } // Check if token is not expired
     });
   
+    if(user.verified === true){
+      return res.status(200).json({success: true, message: "User is already verified"})
+    }
     if (user) {
       // Mark the user as verified
       user.verified = true;
@@ -165,12 +170,16 @@ exports.verify = async(req, res) => {
       user.verificationTokenExpiresAt = undefined;
       await user.save();
      // Redirect the user to a success page or send a success response
-     res.status(201).json({message: 'Email verification successful! Please go to login', status: true});
-} else {
-  // Handle invalid or expired verification token
-  res.status(400).json({ success: false, message:'Invalid verification token or token has expired.'});
-}
-}
+     return res.status(201).json({message: 'Email verification successful! Please go to login', status: true});
+    }
+    } catch (error) {
+      // Handle invalid or expired verification token
+        res.status(400).json({ success: false, message:'Invalid verification token or token has expired.'});
+    
+    }
+    
+} 
+
 
 exports.resendVerification = async(req, res) => {
     const { email } = req.body;
@@ -179,7 +188,7 @@ exports.resendVerification = async(req, res) => {
       const user = await UserModel.findOne({ email });
   
       if (!user) {
-        return res.status(404).json({success:false, message: 'User not found' });
+        return res.status(404).json({success:false, message: 'User not found, please register'});
       }
   
       const verificationToken = generateVerificationToken(); 
