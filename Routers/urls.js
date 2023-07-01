@@ -8,7 +8,7 @@ const urlsRouter = express.Router()
 
 
 urlsRouter.post('/shorten', urlsController.shorten)
-urlsRouter.get('/generate-qrcode/:shortId', urlsController.generateqrcode)
+/urlsRouter.get('/generate-qrcode/:shortId', urlsController.generateqrcode)
 urlsRouter.get('/links/history', urlsController.getLinkHistory)
 urlsRouter.delete('/links/:id', urlsController.deleteLink)
 

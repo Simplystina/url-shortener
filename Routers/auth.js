@@ -6,9 +6,9 @@ require("dotenv").config()
 const authRouter = express.Router()
 
 
+
 authRouter.post('/signup', authController.register)
 authRouter.post('/login', authController.login)
-authRouter.get('/veri', authController.verify)
 authRouter.post('/resend-link',authController.resendVerification)
-
+authRouter.get('/verify', authController.verify)
 module.exports = authRouter

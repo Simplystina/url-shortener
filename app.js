@@ -34,7 +34,7 @@ app.use(function(req, res, next) {
 });
 
 //app.use(rateLimiterUsingThirdParty); //rate limiting
-app.use('/', authRouter)
+app.use('/user', authRouter)
 app.use('/urls', auth,urlsRouter)
 
 

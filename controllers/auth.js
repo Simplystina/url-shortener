@@ -106,7 +106,7 @@ exports.login = async(req,res)=>{
         //Validate user input
 
         if(!(email && password)){
-            res.status(400).json({success: false, message: "All input is required"})
+          return res.status(400).json({success: false, message: "All input is required"})
         }
 
          //Validate if user exist in our database
@@ -142,7 +142,7 @@ exports.login = async(req,res)=>{
        
         return  res.status(200).json({success:true, message:"Logged in successfully", data:userData})
     } catch (error) {
-        console.log(error.keyPattern, "error")
+        console.log(error, "error")
         return res.status(404).send("An error occurred")
     }
 
@@ -151,7 +151,7 @@ exports.login = async(req,res)=>{
 // API endpoint for verifying the user's email
 exports.verify = async(req, res) => {
     const { token } = req.query;
-  
+                              
     // Find the user with the provided verification token
     const user = await UserModel.findOne({
       verificationToken: token,
@@ -165,10 +165,10 @@ exports.verify = async(req, res) => {
       user.verificationTokenExpiresAt = undefined;
       await user.save();
      // Redirect the user to a success page or send a success response
-     res.status(201).json({message: 'Email verification successful! Please go to login',data: null, status: true});
+     res.status(201).json({message: 'Email verification successful! Please go to login', status: true});
 } else {
   // Handle invalid or expired verification token
-  res.status(400).send('Invalid verification token or token has expired.');
+  res.status(400).json({ success: false, message:'Invalid verification token or token has expired.'});
 }
 }
 

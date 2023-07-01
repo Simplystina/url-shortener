@@ -8,7 +8,6 @@ exports.shorten = async(req,res)=>{
         // Dynamically import the nanoid library
          const { customAlphabet } = await import('nanoid');
         const {url} = req.body
-
         // Validate the original URL
         if (!validator.isURL(url)) {
             res.status(400).json({success: false, message:'Invalid URL'});
