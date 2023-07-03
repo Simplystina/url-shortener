@@ -79,7 +79,7 @@ exports.register = async(req,res)=>{
      
          //await user.save();
        
-         const verificationLink = `${baseUrl}/verify?token=${verificationToken}`;
+         const verificationLink = `$https://linkurl.netlify.app/verify-mail?token=${verificationToken}`;
         // Send verification email to the user
         await sendVerificationEmail(user,verificationLink);
 
