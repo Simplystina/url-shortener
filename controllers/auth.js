@@ -29,7 +29,7 @@ async function sendVerificationEmail(user,verificationLink) {
       <h2 style="color:blue" >Welcome to URLShortner</h2>
       <p>Dear ${user.firstName},</p>
       <p>Thank you for registering an account with URLShortner. To verify your email address and activate your account, please click the following link:</p>
-      <a href="${verificationLink}">Verify Email</a>
+      <a href=${verificationLink}>${verificationLink}</a>
       <p>Please note that the verification link will expire after 1 hour.</p>
       <p>If you did not register for an account with URLShortner, please disregard this email.</p>
       <p>Best regards,</p>
@@ -77,9 +77,9 @@ exports.register = async(req,res)=>{
          user.verificationToken = verificationToken;
          user.verificationTokenExpiresAt = Date.now() + 60 * 60 * 1000; // Expiry after 1 hour
      
-         //await user.save();
+         await user.save();
        
-         const verificationLink = `$https://linkurl.netlify.app/verify-mail?token=${verificationToken}`;
+         const verificationLink = `https://linkurl.netlify.app/verify-mail?token=${verificationToken}`
         // Send verification email to the user
         await sendVerificationEmail(user,verificationLink);
 
@@ -111,6 +111,7 @@ exports.login = async(req,res)=>{
 
          //Validate if user exist in our database
         const user = await UserModel.findOne({email})
+        console.log(user,"user")
         
         if(!user){
             return res.status(404).json({success: false, message: "User doesn't exist"})
@@ -151,26 +152,26 @@ exports.login = async(req,res)=>{
 // API endpoint for verifying the user's email
 exports.verify = async(req, res) => {
     const { token } = req.query;
-                              
+         console.log(token,"tokennnnnnnnnn")                     
 
     try {
       // Find the user with the provided verification token
     const user = await UserModel.findOne({
       verificationToken: token,
-      verificationTokenExpiresAt: { $gt: Date.now() } // Check if token is not expired
+      verificationTokenExpiresAt: { $gt: new Date() } // Check if token is not expired
     });
-  
+
     if(user.verified === true){
       return res.status(200).json({success: true, message: "User is already verified"})
     }
     if (user) {
       // Mark the user as verified
       user.verified = true;
-      user.verificationToken = undefined;
-      user.verificationTokenExpiresAt = undefined;
+      //user.verificationToken = undefined;
+      //user.verificationTokenExpiresAt = undefined;
       await user.save();
      // Redirect the user to a success page or send a success response
-     return res.status(201).json({message: 'Email verification successful! Please go to login', status: true});
+     return res.status(201).json({message: 'Email verification successful! Please go to login', success: true});
     }
     } catch (error) {
       // Handle invalid or expired verification token
