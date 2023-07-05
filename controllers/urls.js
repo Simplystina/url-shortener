@@ -5,16 +5,17 @@ const QRCode = require('qrcode-generator');
 const baseUrl = 'https://urlshortner-3u0i.onrender.com'
 exports.shorten = async(req,res)=>{
     try {
+        const {customizedurl, url} = req.body
         // Dynamically import the nanoid library
          const { customAlphabet } = await import('nanoid');
-        const {url} = req.body
+       
         // Validate the original URL
         if (!validator.isURL(url)) {
             res.status(400).json({success: false, message:'Invalid URL'});
            return;
         }
-
         const cleanedUrl = url.replace(/[^\w\s]/gi, "");
+        
 
         // Generate a NanoID
         const nanoid = customAlphabet(cleanedUrl, 5)
@@ -23,10 +24,10 @@ exports.shorten = async(req,res)=>{
       
          const shortenedurl = `${baseUrl}/${shortid}`
         const data = {
-            shortenurl : shortenedurl,
+            shortenurl : customizedurl? `${baseUrl}/${customizedurl}` : shortenedurl,
             originalurl: url,
             userId:req.user.userid,
-            shortId : shortid,
+            shortId : customizedurl? customizedurl : shortid,
             clickCount: 0
         }
 

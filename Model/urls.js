@@ -12,7 +12,8 @@ const Urls = new mongoose.Schema(
     shortId: {type: String, required:true, unique: true},
     originalurl:{type: String, required:true},
     qrcode: {type: String},
-    clickCount: {type: Number}
+    clickCount: {type: Number},
+    customizedurl:{type:String}
   },
   {
     timestamps: true, toJSON: {virtuals: true}
