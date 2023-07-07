@@ -3,6 +3,15 @@ const validator = require('validator');
 const QRCode = require('qrcode-generator');
 
 const baseUrl = 'https://urlshortner-3u0i.onrender.com'
+
+// Function to generate QR code using the qrcode-generator library
+function generateQRCode(url) {
+    const qr = QRCode(0, 'M');
+    qr.addData(url);
+    qr.make();
+    return qr.createDataURL();
+  }
+
 exports.shorten = async(req,res)=>{
     try {
         const {customizedurl, url} = req.body
@@ -20,19 +29,25 @@ exports.shorten = async(req,res)=>{
         // Generate a NanoID
         const nanoid = customAlphabet(cleanedUrl, 5)
         const shortid = nanoid() 
-
-      
+           
+        //generate qr code
+        const qrCodeDataURL = await generateQRCode(url)
+        
          const shortenedurl = `${baseUrl}/${shortid}`
         const data = {
             shortenurl : customizedurl? `${baseUrl}/${customizedurl}` : shortenedurl,
             originalurl: url,
             userId:req.user.userid,
             shortId : customizedurl? customizedurl : shortid,
-            clickCount: 0
+            clickCount: 0,
+            qrcode: qrCodeDataURL
         }
 
         const urlData = await UrlsModel.create(data)
 
+
+        
+  
         console.log(urlData)
         return res.status(201).json({
             success:true,
@@ -76,52 +91,16 @@ exports.urlRedirect = async(req,res)=>{
     }
 }
 
-// Function to generate QR code using the qrcode-generator library
-function generateQRCode(url) {
-    const qr = QRCode(0, 'M');
-    qr.addData(url);
-    qr.make();
-    return qr.createDataURL();
-  }
-
-exports.generateqrcode = async(req,res)=>{
-    try {
-        const shortId = req.params.shortId;
-
-        const  url  = req.params.shortId
-        console.log(url, "urlllllllllllllllll", req.ip,"rep.ip")
-
-        const data = await UrlsModel.findOne({shortId: url})
-
-        console.log(data,"dataaaaaaaaaaaaa")
-        if(!data){
-           return res.status(404).json({success: false, message:"The url link generated is broken"})
-        
-        }
-        const originalUrl = data.originalurl
-        // Generate the QR code image using the original URL
-         const qrCodeDataURL = await generateQRCode(originalUrl)
-         res.type('png');
-         console.log(qrCodeDataURL,"code")
-         res.status(201).json({success:true, message:"QR Code successfully generateQRCode, data:qrCodeDataURL"})
-         console.log(originalUrl, data, shortId)
-
-    } catch (error) {
-        console.log(error,"error")
-    }
-}
 
 
 // Backend route
 exports.getLinkHistory = async(req,res)=>{
     try {
        
-        const userId = req.user.userid; // Assuming you have implemented user authentication and can access the user's ID from the request
-          
-        // Query the database to find the user's link history
+        const userId = req.user.userid; 
         const linkHistory = await UrlsModel.find({ userId }).sort({ createdAt: -1 });
     
-        res.json({success:true, message:"Successfully retrived all links", data: linkHistory});
+        res.status(200).json({success:true, message:"Successfully retrived all links", data: linkHistory});
           
           
     } catch (error) {
@@ -130,7 +109,23 @@ exports.getLinkHistory = async(req,res)=>{
     }
 } 
 
+exports.getLink = async(req,res)=>{
+    try {
+        const linkId = req.params.id
+        const info = await UrlsModel.findById(linkId)
 
+        if(!info){
+           
+            return res.status(404).json({ success: false, message: 'Link not found.' });
+        }
+       return  res.status(200).json({success:true, message:"Link fetched successfully", data: info})
+
+       
+    } catch (error) {
+        console.error('Error deleting link:', error);
+      return res.status(500).json({ success:false, message: 'An error occurred while getting the link.' })
+    }
+}
 exports.deleteLink = async (req, res) => {
     try {
       const linkId = req.params.id;
