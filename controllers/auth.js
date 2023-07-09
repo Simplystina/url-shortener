@@ -46,7 +46,7 @@ exports.register = async(req,res)=>{
     try {
 
         //get user input
-        console.log(req.body, "vodyyyyyyy")
+      
         const {firstName, lastName, email, password}=data = req.body
         
         if(!(firstName && lastName && email && password)){
@@ -79,7 +79,7 @@ exports.register = async(req,res)=>{
          const verificationToken = generateVerificationToken();
         
        
-         const verificationLink = `https://linkurl.netlify.app/verify-mail?token=${verificationToken}`
+         const verificationLink = `https://linkurl.netlify.app/verify-mail?token=${verificationToken}&email=${email}`
         // Send verification email to the user
         await sendVerificationEmail(user,verificationLink);
 
@@ -122,6 +122,7 @@ exports.login = async(req,res)=>{
             return res.status(404).json({success: false, message: "User doesn't exist"})
         } 
         
+       
         //validate user password
         const validate = await user.isValidPassword(password)
         const isValidPassword = await bcrypt.compare(password, user?.password);
@@ -156,31 +157,43 @@ exports.login = async(req,res)=>{
 
 // API endpoint for verifying the user's email
 exports.verify = async(req, res) => {
-    const { token } = req.query;
+    const { token, email } = req.query;
          console.log(token,"tokennnnnnnnnn")                     
 
     try {
+
       // Find the user with the provided verification token
-    const user = await UserModel.findOne({
+    const userToken = await UserModel.findOne({
       verificationToken: token,
       verificationTokenExpiresAt: { $gt: new Date() } // Check if token is not expired
     });
-
-    if(user.verified === true){
+    const userEmail = await UserModel.findOne({email})//check if the mail is verified
+    if(userEmail.verified === true){
       return res.status(200).json({success: true, message: "User is already verified"})
     }
-    if (user) {
+  
+    if (userToken) {
       // Mark the user as verified
-      user.verified = true;
-      //user.verificationToken = undefined;
-      //user.verificationTokenExpiresAt = undefined;
-      await user.save();
-     // Redirect the user to a success page or send a success response
-     return res.status(201).json({message: 'Email verification successful! Please go to login', success: true});
+      const userUpdate = await UserModel.updateOne(
+        {
+          verificationToken: token,
+          verificationTokenExpiresAt: { $gt: new Date() }
+        },
+        {
+          $set: { verified: true },
+          $unset: {
+            verificationToken: '',
+            verificationTokenExpiresAt: ''
+          }
+        }
+      );
+      return res.status(201).json({message: 'Email verification successful! Please go to login', success: true});
     }
+    return res.status(400).json({ success: false, message:'Invalid verification token or token has expired.'});
     } catch (error) {
+     
       // Handle invalid or expired verification token
-        res.status(400).json({ success: false, message:'Invalid verification token or token has expired.'});
+        return res.status(400).json({ success: false, message:'Invalid verification token or token has expired.'});
     
     }
     
