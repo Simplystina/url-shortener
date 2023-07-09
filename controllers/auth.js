@@ -4,6 +4,7 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const bcrypt = require("bcryptjs")
 
+require("dotenv").config()
 // Generate a verification token
 function generateVerificationToken() {
     return crypto.randomBytes(32).toString('hex');
@@ -17,21 +18,21 @@ async function sendVerificationEmail(user,verificationLink) {
      const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
-      user: 'stinachinma@gmail.com',
-      pass: 'dcctooukolshntne'
+      user: process.env.GMAIL_USERNAME,
+      pass: process.env.GMAIL_PASSWORD
     }
      })
  
   const mailOptions = {
     to: user.email,
-    subject: 'Welcome to URLShortner - Email Verification',
+    subject: 'Welcome to LINKURL - Email Verification',
     html: `
-      <h2 style="color:blue" >Welcome to URLShortner</h2>
+      <h2 style="color:blue" >Welcome to LinkURL</h2>
       <p>Dear ${user.firstName},</p>
-      <p>Thank you for registering an account with URLShortner. To verify your email address and activate your account, please click the following link:</p>
+      <p>Thank you for registering an account with LinkURL. To verify your email address and activate your account, please click the following link:</p>
       <a href=${verificationLink}>${verificationLink}</a>
       <p>Please note that the verification link will expire after 1 hour.</p>
-      <p>If you did not register for an account with URLShortner, please disregard this email.</p>
+      <p>If you did not register for an account with LinkURL, please disregard this email.</p>
       <p>Best regards,</p>
       <p>Developed by Dinma</p>
     `
