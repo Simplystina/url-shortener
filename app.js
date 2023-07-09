@@ -9,6 +9,7 @@ require("dotenv").config()
 //import Routers
 const authRouter = require("./Routers/auth")
 const urlsRouter = require("./Routers/urls")
+const userRouter = require("./Routers/user")
 const rateLimiterUsingThirdParty  = require('./Middleware/rateLimit')
 
 
@@ -34,9 +35,9 @@ app.use(function(req, res, next) {
 });
 
 //app.use(rateLimiterUsingThirdParty); //rate limiting
-app.use('/user', authRouter)
+app.use('/auth', authRouter)
 app.use('/urls', auth,urlsRouter)
-
+app.use('/user', auth, userRouter)
 
 app.get('/',(req,res)=>{
     res.status(200).send({message:"Home Route",status:true})

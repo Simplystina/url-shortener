@@ -11,4 +11,5 @@ authRouter.post('/signup', authController.register)
 authRouter.post('/login', authController.login)
 authRouter.post('/resend-link',authController.resendVerification)
 authRouter.get('/verify', authController.verify)
+
 module.exports = authRouter
