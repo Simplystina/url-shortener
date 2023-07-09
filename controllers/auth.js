@@ -64,20 +64,19 @@ exports.register = async(req,res)=>{
         if(password.length < 5){
             return res.status(404).json({success:false, message:"Password must be greater than length 4"})
         }
+        const verificationToken = generateVerificationToken();
         //create user in our database
        
         
         const userData = {
           ...data,
-         verificationToken : generateVerificationToken(),
+         verificationToken : verificationToken,
          verificationTokenExpiresAt : Date.now() + 60 * 60 * 1000
         }
         
         const user = await UserModel.create(userData)
 
-       
-         const verificationToken = generateVerificationToken();
-        
+  
        
          const verificationLink = `https://linkurl.netlify.app/verify-mail?token=${verificationToken}&email=${email}`
         // Send verification email to the user
@@ -168,6 +167,7 @@ exports.verify = async(req, res) => {
       verificationTokenExpiresAt: { $gt: new Date() } // Check if token is not expired
     });
     const userEmail = await UserModel.findOne({email})//check if the mail is verified
+    console.log(userToken,"email",userEmail)
     if(userEmail.verified === true){
       return res.status(200).json({success: true, message: "User is already verified"})
     }
@@ -191,7 +191,7 @@ exports.verify = async(req, res) => {
     }
     return res.status(400).json({ success: false, message:'Invalid verification token or token has expired.'});
     } catch (error) {
-     
+      console.log(error,"error")
       // Handle invalid or expired verification token
         return res.status(400).json({ success: false, message:'Invalid verification token or token has expired.'});
     
