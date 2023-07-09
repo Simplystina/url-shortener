@@ -35,10 +35,10 @@ exports.shorten = async(req,res)=>{
         
          const shortenedurl = `${baseUrl}/${shortid}`
         const data = {
-            shortenurl : customizedurl? `${baseUrl}/${customizedurl}` : shortenedurl,
+            shortenurl : customizedurl? `${baseUrl}/${customizedurl.trim()}` : shortenedurl,
             originalurl: url,
             userId:req.user.userid,
-            shortId : customizedurl? customizedurl : shortid,
+            shortId : customizedurl? customizedurl.trim() : shortid,
             clickCount: 0,
             qrcode: qrCodeDataURL
         }

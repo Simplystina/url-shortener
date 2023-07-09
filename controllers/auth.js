@@ -224,7 +224,7 @@ exports.resendVerification = async(req, res) => {
         }
       );
   
-      const verificationLink = `https://linkurl.netlify.app/verify-mail?token=${verificationToken}`;
+      const verificationLink = `https://linkurl.netlify.app/verify-mail?token=${verificationToken}&email=${email}`;
       await sendVerificationEmail(user, verificationLink);
   
       return res.status(201).json({success:true , message: 'Verification email resent successfully',data:verificationToken });
