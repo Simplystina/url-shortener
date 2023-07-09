@@ -9,7 +9,7 @@ exports.getUser = async(req,res)=>{
       userData = user.toObject();
         delete userData.password;
        
-     return res.status(200).json({success:true, message:"Successfully retrived all links", data: userData});
+     return res.status(200).json({success:true, message:"Successfully retrived user's info", data: userData});
        
  } catch (error) {
    console.log(error)
