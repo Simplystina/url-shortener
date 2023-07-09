@@ -65,27 +65,31 @@ exports.register = async(req,res)=>{
         }
         //create user in our database
        
-    
-        const user = await UserModel.create(data)
+        
+        const userData = {
+          ...data,
+         verificationToken : generateVerificationToken(),
+         verificationTokenExpiresAt : Date.now() + 60 * 60 * 1000
+        }
+        
+        const user = await UserModel.create(userData)
 
-        const userWithoutPassword = {
-            ...user._doc,
-            password: undefined,
-         };
-
+       
          const verificationToken = generateVerificationToken();
-         user.verificationToken = verificationToken;
-         user.verificationTokenExpiresAt = Date.now() + 60 * 60 * 1000; // Expiry after 1 hour
-     
-         await user.save();
+        
        
          const verificationLink = `https://linkurl.netlify.app/verify-mail?token=${verificationToken}`
         // Send verification email to the user
         await sendVerificationEmail(user,verificationLink);
 
+        const userWithoutPassword = {
+          ...user._doc,
+          password: undefined,
+       };
+
         return res.status(201).json({
             message: "Registration successful. Please check your email for the verification link.",
-            data:userWithoutPassword,
+            data: userWithoutPassword,
             success:true
         })
     
@@ -110,8 +114,8 @@ exports.login = async(req,res)=>{
         }
 
          //Validate if user exist in our database
-        const user = await UserModel.findOne({email})
-        console.log(user,"user")
+        const user = await UserModel.findOne({ email })
+        //console.log(user,"user")
         
         if(!user){
             return res.status(404).json({success: false, message: "User doesn't exist"})
@@ -119,9 +123,9 @@ exports.login = async(req,res)=>{
         
         //validate user password
         const validate = await user.isValidPassword(password)
-        const compare = await bcrypt.compare(password, user.password);
+        const isValidPassword = await bcrypt.compare(password, user?.password);
   
-         console.log(validate, "validate", compare)
+         console.log(validate, "validate", isValidPassword)
         if(!validate)
         return res.status(404).json({success: false, message:"Wrong password entered"})
 
