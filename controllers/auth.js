@@ -168,7 +168,7 @@ exports.verify = async(req, res) => {
     });
     const userEmail = await UserModel.findOne({email})//check if the mail is verified
     console.log(userToken,"email",userEmail)
-    if(userEmail.verified === true){
+    if(userEmail?.verified === true){
       return res.status(200).json({success: true, message: "User is already verified"})
     }
   
@@ -211,16 +211,23 @@ exports.resendVerification = async(req, res) => {
       }
   
       const verificationToken = generateVerificationToken(); 
-      const verificationTokenExpiresAt = Date.now() + 3600000; // Set expiration to 1 hour from now
+      const verificationTokenExpiresAt = Date.now() + 3600000; 
   
-      user.verificationToken = verificationToken;
-      user.verificationTokenExpiresAt = verificationTokenExpiresAt;
-      await user.save();
+      const userUpdate = await UserModel.updateOne(
+        {email},
+        {
+          $set: { 
+            verificationToken: verificationToken,
+            verificationTokenExpiresAt: verificationTokenExpiresAt
+          },
+        
+        }
+      );
   
       const verificationLink = `https://linkurl.netlify.app/verify-mail?token=${verificationToken}`;
       await sendVerificationEmail(user, verificationLink);
   
-      return res.status(201).json({success:true , message: 'Verification email resent successfully' });
+      return res.status(201).json({success:true , message: 'Verification email resent successfully',data:verificationToken });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ success: false, message: 'Internal server error' });
