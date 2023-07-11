@@ -9,6 +9,9 @@ https://urlshortner-3u0i.onrender.com
 ## FRONTEND Url
 https://linkurl.netlify.app/
 
+## Frontend Code base
+https://github.com/Simplystina/linkly
+
 ## Table of Contents
 
 - [Installation](#installation)
@@ -49,26 +52,30 @@ Make sure the backend server is running before using the frontend or making API 
 The backend provides the following API endpoints:
 
 ### Authentication
-* POST /register: Registers a new user with the provided details.
-* POST /login: Authenticates a user and returns a JWT token for subsequent API requests.
-* GET /verify?token=<verification_token>: Verifies the user's email address using the verification token.
-* POST /resend-verification: Resends the verification email to the user.
+* POST /auth/register: Registers a new user with the provided details.
+* POST /auth/login: Authenticates a user and returns a JWT token for subsequent API requests.
+* GET /auth/verify?token=<verification_token>: Verifies the user's email address using the verification token.
+* POST /auth/resend-verification: Resends the verification email to the user.
 
   ### URLS
 * POST /urls/shorten: Creates a shortened URL for the original URL.
 * GET /:shortId: Redirects the user to the original URL associated with the short ID.
-* GET /qrcode/:shortId: Generates a QR code image for the original URL associated with the short ID.
 * GET /urls/links/history: Retrieves the link history of the authenticated user.
 * DELETE /urls/link/:id: Deletes a link by its ID.
+
+  ### /User
+  * GET /user/info : Get's the details of the user
+
+    
 For detailed information about each API endpoint, including request/response formats and authentication requirements, refer to the API documentation [https://documenter.getpostman.com/view/19697282/2s93zB62eg](https://documenter.getpostman.com/view/19697282/2s93zB62eg).
 
 ## Technologies Used
-Node.js
-Express
-MongoDB
-JSON Web Token (JWT)
-Nodemailer (for sending verification emails)
-QRCode-generator (for generating QR codes)
+* Node.js
+* Express
+* MongoDB
+* JSON Web Token (JWT)
+* Nodemailer (for sending verification emails)
+* QRCode-generator (for generating QR codes)
 
 ## License
 This project is licensed under the MIT License.
