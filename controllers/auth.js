@@ -4,6 +4,7 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const bcrypt = require("bcryptjs")
 
+
 require("dotenv").config()
 // Generate a verification token
 function generateVerificationToken() {
@@ -37,7 +38,6 @@ async function sendVerificationEmail(user,verificationLink) {
       <p>Developed by Dinma</p>
     `
   };
-
   await transporter.sendMail(mailOptions);
 }
 
@@ -52,9 +52,8 @@ exports.register = async(req,res)=>{
         if(!(firstName && lastName && email && password)){
            return res.status(400).json({success: false, message:"All input is required"})
         }
-        
+  
         //check if user already exist
-
         const oldUser = await UserModel.findOne({email})
         if (oldUser) {
             return res.status(409).json({ success: false, message:"User Already exist. Please Login"})
@@ -65,9 +64,8 @@ exports.register = async(req,res)=>{
             return res.status(404).json({success:false, message:"Password must be greater than length 4"})
         }
         const verificationToken = generateVerificationToken();
+
         //create user in our database
-       
-        
         const userData = {
           ...data,
          verificationToken : verificationToken,
@@ -75,9 +73,6 @@ exports.register = async(req,res)=>{
         }
         
         const user = await UserModel.create(userData)
-
-  
-       
          const verificationLink = `https://linkurl.netlify.app/verify-mail?token=${verificationToken}&email=${email}`
         // Send verification email to the user
         await sendVerificationEmail(user,verificationLink);
@@ -94,14 +89,11 @@ exports.register = async(req,res)=>{
         })
     
     } catch (error) {
-        console.log(error,"error")
-
         return res.status(404).send("An error has occurred")
-    }
+  }
 }
 
 exports.login = async(req,res)=>{
-    console.log(req.body, "reeee")
     try {
           
         //Get user input
@@ -115,8 +107,7 @@ exports.login = async(req,res)=>{
 
          //Validate if user exist in our database
         const user = await UserModel.findOne({ email })
-        //console.log(user,"user")
-        
+       
         if(!user){
             return res.status(404).json({success: false, message: "User doesn't exist"})
         } 
@@ -125,8 +116,6 @@ exports.login = async(req,res)=>{
         //validate user password
         const validate = await user.isValidPassword(password)
         const isValidPassword = await bcrypt.compare(password, user?.password);
-  
-         console.log(validate, "validate", isValidPassword)
         if(!validate)
         return res.status(404).json({success: false, message:"Wrong password entered"})
 
@@ -141,14 +130,12 @@ exports.login = async(req,res)=>{
         //save user token
         userData = user.toObject();
         userData.token = token 
-       
-        //console.log(token,"tokennnnnnnnnn", user, user.firstName)
+      
         //Delete the password from the object so as not to display the hash to the user
         delete userData.password;
        
         return  res.status(200).json({success:true, message:"Logged in successfully", data:userData})
     } catch (error) {
-        console.log(error, "error")
         return res.status(404).send("An error occurred")
     }
 
@@ -157,8 +144,7 @@ exports.login = async(req,res)=>{
 // API endpoint for verifying the user's email
 exports.verify = async(req, res) => {
     const { token, email } = req.query;
-         console.log(token,"tokennnnnnnnnn")                     
-
+        
     try {
 
       // Find the user with the provided verification token
@@ -167,7 +153,6 @@ exports.verify = async(req, res) => {
       verificationTokenExpiresAt: { $gt: new Date() } // Check if token is not expired
     });
     const userEmail = await UserModel.findOne({email})//check if the mail is verified
-    console.log(userToken,"email",userEmail)
     if(userEmail?.verified === true){
       return res.status(200).json({success: true, message: "User is already verified"})
     }
@@ -191,7 +176,6 @@ exports.verify = async(req, res) => {
     }
     return res.status(400).json({ success: false, message:'Invalid verification token or token has expired.'});
     } catch (error) {
-      console.log(error,"error")
       // Handle invalid or expired verification token
         return res.status(400).json({ success: false, message:'Invalid verification token or token has expired.'});
     

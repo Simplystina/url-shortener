@@ -12,8 +12,7 @@ exports.getUser = async(req,res)=>{
      return res.status(200).json({success:true, message:"Successfully retrived user's info", data: userData});
        
  } catch (error) {
-   console.log(error)
-   res.status(500).json({success:false, error: 'An error occurred while retrieving user details.' });
+   return res.status(500).json({ success:false, error: 'An error occurred while retrieving user details.' });
  }
 
 }

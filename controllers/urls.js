@@ -2,6 +2,7 @@ const UrlsModel = require("../Model/urls")
 const validator = require('validator');
 const QRCode = require('qrcode-generator');
 
+
 const baseUrl = 'https://urlshortner-3u0i.onrender.com'
 
 // Function to generate QR code using the qrcode-generator library
@@ -16,24 +17,44 @@ exports.shorten = async(req,res)=>{
     try {
         const {customizedurl, url} = req.body
         // Dynamically import the nanoid library
-         const { customAlphabet } = await import('nanoid');
-       
+        const { customAlphabet } = await import('nanoid');
+        
+
         // Validate the original URL
         if (!validator.isURL(url)) {
             res.status(400).json({success: false, message:'Invalid URL'});
            return;
         }
         const cleanedUrl = url.replace(/[^\w\s]/gi, "");
-        
 
+        // check if the customizedurl is more than 6 letters
+        if(customizedurl?.trim().length > 6){
+             return res.status(404).json({
+              success: false,
+              message: "Alias should be less or equal to 6 letters. Try new one?",
+            
+            });    
+        }
         // Generate a NanoID
         const nanoid = customAlphabet(cleanedUrl, 5)
         const shortid = nanoid() 
            
         //generate qr code
         const qrCodeDataURL = await generateQRCode(url)
-        
          const shortenedurl = `${baseUrl}/${shortid}`
+
+
+         const checkShortID = await UrlsModel.find({
+           shortId: customizedurl ? customizedurl.trim() : shortid,
+         });
+         if(checkShortID.length > 0){
+            return res.status(404).json({
+              success: false,
+              message: "This alias has been used. Try new one?",
+            
+            });    
+        }
+
         const data = {
             shortenurl : customizedurl? `${baseUrl}/${customizedurl.trim()}` : shortenedurl,
             originalurl: url,
@@ -44,11 +65,6 @@ exports.shorten = async(req,res)=>{
         }
 
         const urlData = await UrlsModel.create(data)
-
-
-        
-  
-        console.log(urlData)
         return res.status(201).json({
             success:true,
             message: "Shortened url created successfully.",
@@ -56,27 +72,23 @@ exports.shorten = async(req,res)=>{
         })    
        
     } catch (error) {
-        console.log(error,"error")
+        console.log(error,"error")  
         
     }
 }
 
 exports.urlRedirect = async(req,res)=>{
 
-    console.log(req.params)
     try {
         
         const  url  = req.params.shortId
-        console.log(url, "urlllllllllllllllll")
-
         const data = await UrlsModel.findOne({shortId: url})
 
-        console.log(data,"dataaaaaaaaaaaaa")
         if(!data){
            return res.status(404).json({success: false, message:"The url link generated is broken"})
         }
         const originalUrl = data.originalurl
-        console.log(originalUrl, data)
+     
          // Increment the click count
           data.clickCount++;
 
@@ -96,7 +108,6 @@ exports.urlRedirect = async(req,res)=>{
 // Backend route
 exports.getLinkHistory = async(req,res)=>{
     try {
-       
         const userId = req.user.userid; 
         const linkHistory = await UrlsModel.find({ userId }).sort({ createdAt: -1 });
     
