@@ -28,7 +28,7 @@ exports.shorten = async(req,res)=>{
         const cleanedUrl = url.replace(/[^\w\s]/gi, "");
 
         // check if the customizedurl is more than 6 letters
-        if(customizedurl?.trim().length > 6){
+        if(customizedurl?.trim().length > 8){
              return res.status(404).json({
               success: false,
               message: "Alias should be less or equal to 6 letters. Try new one?",
@@ -95,9 +95,6 @@ exports.urlRedirect = async(req,res)=>{
         // Save the updated URL record
         await data.save();
         res.redirect(originalUrl)
-
-       
-       // res.send("successful!")
     } catch (error) {
         console.log(error, "error")
     }
